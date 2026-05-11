@@ -8,6 +8,10 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      APP_DIR: /home/u481666576/tripledger
+      PUBLIC_DIR: /home/u481666576/domains/dodgerblue-wallaby-863716.hostingersite.com/public_html
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,7 +36,7 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-      - name: Deploy via rsync over SSH
+      - name: Deploy app files (outside public_html)
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: >-
@@ -46,8 +50,21 @@ jobs:
             --exclude='storage/framework/sessions'
             --exclude='storage/framework/views'
             --exclude='tests'
+            --exclude='public'
           path: ./
-          remote_path: ${{ secrets.HOSTINGER_REMOTE_PATH }}
+          remote_path: /home/u481666576/tripledger
+          remote_host: ${{ secrets.HOSTINGER_SSH_HOST }}
+          remote_port: 65002
+          remote_user: ${{ secrets.HOSTINGER_SSH_USER }}
+          remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
+          remote_key_pass: ${{ secrets.HOSTINGER_SSH_KEY_PASSPHRASE }}
+
+      - name: Deploy public files (into public_html)
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avz --delete
+          path: ./public/
+          remote_path: /home/u481666576/domains/dodgerblue-wallaby-863716.hostingersite.com/public_html
           remote_host: ${{ secrets.HOSTINGER_SSH_HOST }}
           remote_port: 65002
           remote_user: ${{ secrets.HOSTINGER_SSH_USER }}
@@ -63,7 +80,27 @@ jobs:
           passphrase: ${{ secrets.HOSTINGER_SSH_KEY_PASSPHRASE }}
           port: 65002
           script: |
-            cd ${{ secrets.HOSTINGER_REMOTE_PATH }}
+            APP_DIR="/home/u481666576/tripledger"
+            PUBLIC_DIR="/home/u481666576/domains/dodgerblue-wallaby-863716.hostingersite.com/public_html"
+
+            # Patch index.php to reference app outside public_html
+            cat > "$PUBLIC_DIR/index.php" << 'PHPEOF'
+            <?php
+            use Illuminate\Http\Request;
+            define('LARAVEL_START', microtime(true));
+            if (file_exists($maintenance = '/home/u481666576/tripledger/storage/framework/maintenance.php')) {
+                require $maintenance;
+            }
+            require '/home/u481666576/tripledger/vendor/autoload.php';
+            (require_once '/home/u481666576/tripledger/bootstrap/app.php')
+                ->handleRequest(Request::capture());
+            PHPEOF
+
+            cd "$APP_DIR"
+
+            # Generate app key if missing
+            grep -q '^APP_KEY=$' .env && php artisan key:generate || true
+
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
