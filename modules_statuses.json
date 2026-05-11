@@ -1,0 +1,9 @@
+{
+    "Core": true,
+    "Trip": true,
+    "Expense": true,
+    "Member": true,
+    "Settlement": true,
+    "Report": true,
+    "Dashboard": true
+}

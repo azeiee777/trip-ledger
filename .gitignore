@@ -1,0 +1,60 @@
+# ── Laravel ──────────────────────────────────────────────────
+/vendor
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/app/public/*
+/storage/debugbar
+/storage/pail
+/bootstrap/cache/*
+!/bootstrap/cache/.gitkeep
+
+# ── Environment ───────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+/auth.json
+
+# ── Database ──────────────────────────────────────────────────
+/database/*.sqlite
+/database/*.sqlite-journal
+
+# ── Testing ───────────────────────────────────────────────────
+.phpunit.result.cache
+/.phpunit.cache
+/coverage
+
+# ── Build / compiled ─────────────────────────────────────────
+/public/fonts-manifest.dev.json
+npm-debug.log
+yarn-error.log
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+
+# ── IDEs & editors ───────────────────────────────────────────
+/.idea
+/.vscode
+/.zed
+/.nova
+/.cursor/
+/.codex
+/.phpactor.json
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# ── OS ───────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Misc Laravel ─────────────────────────────────────────────
+Homestead.json
+Homestead.yaml
+
+# ── Claude Code ───────────────────────────────────────────────
+/.claude
