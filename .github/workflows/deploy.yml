@@ -35,23 +35,24 @@ jobs:
       - name: Deploy via rsync over SSH
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avz --delete -e "ssh -p 65002"
+          switches: >-
+            -avz --delete
+            --exclude='.git'
+            --exclude='.github'
+            --exclude='node_modules'
+            --exclude='.env'
+            --exclude='storage/logs'
+            --exclude='storage/framework/cache'
+            --exclude='storage/framework/sessions'
+            --exclude='storage/framework/views'
+            --exclude='tests'
           path: ./
           remote_path: ${{ secrets.HOSTINGER_REMOTE_PATH }}
           remote_host: ${{ secrets.HOSTINGER_SSH_HOST }}
+          remote_port: 65002
           remote_user: ${{ secrets.HOSTINGER_SSH_USER }}
           remote_key: ${{ secrets.HOSTINGER_SSH_KEY }}
           remote_key_pass: ${{ secrets.HOSTINGER_SSH_KEY_PASSPHRASE }}
-          exclude: >-
-            .git,
-            .github,
-            node_modules,
-            .env,
-            storage/logs/*,
-            storage/framework/cache/*,
-            storage/framework/sessions/*,
-            storage/framework/views/*,
-            tests
 
       - name: Run post-deploy commands on server
         uses: appleboy/ssh-action@v1
