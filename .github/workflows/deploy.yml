@@ -35,7 +35,7 @@ jobs:
       - name: Deploy via rsync over SSH
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avz --delete
+          switches: -avz --delete -e "ssh -p 65002"
           path: ./
           remote_path: ${{ secrets.HOSTINGER_REMOTE_PATH }}
           remote_host: ${{ secrets.HOSTINGER_SSH_HOST }}
@@ -60,6 +60,7 @@ jobs:
           username: ${{ secrets.HOSTINGER_SSH_USER }}
           key: ${{ secrets.HOSTINGER_SSH_KEY }}
           passphrase: ${{ secrets.HOSTINGER_SSH_KEY_PASSPHRASE }}
+          port: 65002
           script: |
             cd ${{ secrets.HOSTINGER_REMOTE_PATH }}
             php artisan config:cache
