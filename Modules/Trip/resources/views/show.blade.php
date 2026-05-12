@@ -1,6 +1,24 @@
 <x-app-layout>
     <x-slot name="header">{{ $trip->name }}</x-slot>
 
+    <style>
+        @media (max-width: 700px) {
+            /* Tab bar scrollable */
+            .trip-tabs { gap: 2px !important; }
+            .trip-tabs button { padding: 7px 10px !important; font-size: 12px !important; }
+
+            /* Expense table action links */
+            .exp-actions { flex-wrap: wrap; gap: 4px !important; }
+
+            /* Overview stat cards already use md:grid-cols-3 which Tailwind handles */
+            /* Per-person breakdown rows */
+            .breakdown-row { flex-wrap: wrap; }
+        }
+        @media (max-width: 480px) {
+            .trip-tabs button { padding: 6px 8px !important; font-size: 11px !important; }
+        }
+    </style>
+
     {{-- OTP reveal modal (shown once after adding a member with email) --}}
     @if(session('success_otp'))
     @php $otpData = session('success_otp'); @endphp
@@ -29,42 +47,46 @@
     @endif
 
     {{-- Trip meta bar --}}
-    <div class="flex flex-wrap items-center gap-3 mb-6">
-        <span class="text-sm text-gray-500">{{ $trip->destination ?? 'No destination' }}</span>
-        @if($trip->start_date)
-        <span class="text-gray-300">·</span>
-        <span class="text-sm text-gray-500">{{ $trip->start_date->format('d M Y') }}{{ $trip->end_date ? ' – '.$trip->end_date->format('d M Y') : '' }}</span>
-        @endif
-        <span class="ml-auto flex gap-2">
+    <div class="mb-6" style="display:flex;flex-direction:column;gap:10px;">
+        {{-- Trip info line --}}
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;">
+            <span class="text-sm text-gray-500">{{ $trip->destination ?? 'No destination' }}</span>
+            @if($trip->start_date)
+            <span class="text-gray-300">·</span>
+            <span class="text-sm text-gray-500">{{ $trip->start_date->format('d M Y') }}{{ $trip->end_date ? ' – '.$trip->end_date->format('d M Y') : '' }}</span>
+            @endif
+        </div>
+        {{-- Action buttons — wrap on mobile --}}
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
             <a href="{{ route('trips.export-pdf', $trip) }}" target="_blank"
-               style="display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:6px 13px;border:1.5px solid #c7d2fe;border-radius:9px;color:#4f46e5;background:#eef2ff;text-decoration:none;font-weight:600;transition:all .15s;"
+               style="display:inline-flex;align-items:center;gap:5px;font-size:13px;padding:6px 13px;border:1.5px solid #c7d2fe;border-radius:9px;color:#4f46e5;background:#eef2ff;text-decoration:none;font-weight:600;transition:all .15s;white-space:nowrap;"
                onmouseover="this.style.background='#e0e7ff'" onmouseout="this.style.background='#eef2ff'">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h4a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
                 Export PDF
             </a>
             @can('update', $trip)
-            <a href="{{ route('trips.edit', $trip) }}" class="text-sm px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Edit</a>
+            <a href="{{ route('trips.edit', $trip) }}" class="text-sm px-3 py-1.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors" style="white-space:nowrap;">Edit</a>
             @endcan
             @can('delete', $trip)
             <form method="POST" action="{{ route('trips.destroy', $trip) }}" id="del-trip-{{ $trip->id }}">
                 @csrf @method('DELETE')
                 <button type="button"
                         @click="$dispatch('open-delete-modal', {formId: 'del-trip-{{ $trip->id }}', title: 'Delete Trip', message: 'Delete \'{{ addslashes($trip->name) }}\' and all its expenses, members, and settlements? This cannot be undone.'})"
-                        class="text-sm px-3 py-1.5 border border-red-200 rounded-lg text-red-600 hover:bg-red-50 transition-colors">
+                        class="text-sm px-3 py-1.5 border border-red-200 rounded-lg text-red-600 hover:bg-red-50 transition-colors" style="white-space:nowrap;">
                     Delete Trip
                 </button>
             </form>
             @endcan
             <button onclick="navigator.clipboard.writeText('{{ route('trips.otp.show', $trip) }}').then(()=>{ this.textContent='Copied!'; setTimeout(()=>this.textContent='Copy Invite Link',2000) })"
-                    class="text-sm px-3 py-1.5 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-700 hover:bg-indigo-100 transition-colors">
+                    class="text-sm px-3 py-1.5 bg-indigo-50 border border-indigo-200 rounded-lg text-indigo-700 hover:bg-indigo-100 transition-colors" style="white-space:nowrap;">
                 Copy Invite Link
             </button>
-        </span>
+        </div>
     </div>
 
     {{-- Tabs --}}
     <div x-data="{ tab: '{{ request('tab', 'overview') }}' }">
-        <div class="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 overflow-x-auto">
+        <div class="trip-tabs flex gap-1 bg-gray-100 rounded-xl p-1 mb-6 overflow-x-auto">
             @foreach(['overview'=>'Overview','expenses'=>'Expenses','members'=>'Members','settlement'=>'Settlement','itinerary'=>'Itinerary'] as $key => $label)
             <button @click="tab='{{ $key }}'"
                     :class="tab==='{{ $key }}' ? 'bg-white shadow-sm text-gray-900 font-semibold' : 'text-gray-500 hover:text-gray-700'"
@@ -261,7 +283,8 @@
                 @if($trip->expenses->isEmpty())
                     <div class="p-10 text-center text-gray-500 text-sm">No expenses yet. Add the first one!</div>
                 @else
-                <table class="w-full text-sm">
+                <div class="overflow-x-auto">
+                <table class="w-full text-sm" style="min-width:540px;">
                     <thead class="bg-gray-50 border-b border-gray-100">
                         <tr>
                             <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase tracking-wide">Expense</th>
@@ -339,6 +362,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                </div>
                 @endif
             </div>
         </div>

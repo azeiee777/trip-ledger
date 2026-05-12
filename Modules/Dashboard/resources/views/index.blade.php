@@ -62,6 +62,28 @@
 
         @keyframes pulse-dot { 0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,.4)} 50%{box-shadow:0 0 0 5px rgba(34,197,94,0)} }
         .live-dot { animation: pulse-dot 2s infinite; }
+
+        /* ── Responsive grids ── */
+        .db-grid-r1 { display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:var(--gap); }
+        .db-grid-r2 { display:grid; grid-template-columns:1.4fr 1fr; gap:var(--gap); }
+        .db-grid-r3 { display:grid; grid-template-columns:1fr 1fr 1.2fr; gap:var(--gap); }
+        .db-grid-r4 { display:grid; gap:var(--gap); }
+
+        @media (max-width: 1100px) {
+            .db-grid-r1 { grid-template-columns: 1fr 1fr; }
+            .db-grid-r2 { grid-template-columns: 1fr; }
+            .db-grid-r3 { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 700px) {
+            .db-grid-r1 { grid-template-columns: 1fr 1fr; }
+            .db-grid-r2, .db-grid-r3, .db-grid-r4 { grid-template-columns: 1fr; }
+            .fp-btn { font-size: 11px; padding: 5px 10px; }
+            .fp-date { font-size: 11px; padding: 4px 8px; }
+            .db-row { padding: 9px 14px; }
+        }
+        @media (max-width: 480px) {
+            .db-grid-r1 { grid-template-columns: 1fr; }
+        }
     </style>
 
     {{-- ═══════════ FILTER BAR ═══════════ --}}
@@ -96,7 +118,7 @@
     </form>
 
     {{-- ═══════════ ROW 1: STAT CARDS ═══════════ --}}
-    <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:var(--gap);margin-bottom:var(--gap);">
+    <div class="db-grid-r1" style="margin-bottom:var(--gap);">
 
         {{-- MY TRIPS hero --}}
         <div style="background:linear-gradient(140deg,#4f46e5 0%,#7c3aed 55%,#6d28d9 100%);border-radius:var(--c-radius);padding:22px;position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(99,102,241,.3);">
@@ -160,7 +182,7 @@
     </div>
 
     {{-- ═══════════ ROW 2: CHART + TOP TRIPS ═══════════ --}}
-    <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:var(--gap);margin-bottom:var(--gap);">
+    <div class="db-grid-r2" style="margin-bottom:var(--gap);">
 
         {{-- MONTHLY CHART --}}
         <div style="background:linear-gradient(135deg,#1e1b4b 0%,#2d2a7e 55%,#3730a3 100%);border-radius:var(--c-radius);padding:22px 22px 18px;position:relative;overflow:hidden;box-shadow:0 6px 24px rgba(49,46,129,.28);">
@@ -288,7 +310,7 @@
     @endif
 
     {{-- ═══════════ ROW 3: CATEGORY + TYPES + RECENT ═══════════ --}}
-    <div style="display:grid;grid-template-columns:1fr 1fr 1.2fr;gap:var(--gap);margin-bottom:var(--gap);">
+    <div class="db-grid-r3" style="margin-bottom:var(--gap);">
 
         {{-- CATEGORY BREAKDOWN --}}
         <div class="db-card">
@@ -400,7 +422,7 @@
         $bothExist = $topPartners->isNotEmpty() && $pendingApprovals->isNotEmpty();
         $cols = $bothExist ? '1fr 1.5fr' : '1fr';
     @endphp
-    <div style="display:grid;grid-template-columns:{{ $cols }};gap:var(--gap);margin-bottom:var(--gap);">
+    <div class="db-grid-r4" style="grid-template-columns:{{ $cols }};margin-bottom:var(--gap);">
 
         {{-- TOP PARTNERS --}}
         @if($topPartners->isNotEmpty())
@@ -463,7 +485,7 @@
     @endif
 
     {{-- ═══════════ QUICK ACTIONS ═══════════ --}}
-    <div style="display:flex;align-items:center;gap:8px;padding:12px 16px;background:#fff;border-radius:14px;border:1.5px solid var(--c-border);box-shadow:var(--c-shadow);">
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px 16px;background:#fff;border-radius:14px;border:1.5px solid var(--c-border);box-shadow:var(--c-shadow);">
         <span style="font-size:10px;font-weight:700;color:#d1d5db;letter-spacing:.07em;text-transform:uppercase;margin-right:6px;flex-shrink:0;">Actions</span>
         <a href="{{ route('trips.create') }}"
            style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:#6366f1;color:#fff;font-size:12px;font-weight:700;border-radius:9px;text-decoration:none;box-shadow:0 3px 10px rgba(99,102,241,.28);">

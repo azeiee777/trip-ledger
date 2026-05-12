@@ -96,6 +96,14 @@ jobs:
                 ->handleRequest(Request::capture());
             PHPEOF
 
+            # Ensure storage directories exist
+            mkdir -p "$APP_DIR/storage/framework/views"
+            mkdir -p "$APP_DIR/storage/framework/cache/data"
+            mkdir -p "$APP_DIR/storage/framework/sessions"
+            mkdir -p "$APP_DIR/storage/logs"
+            mkdir -p "$APP_DIR/bootstrap/cache"
+            chmod -R 775 "$APP_DIR/storage" "$APP_DIR/bootstrap/cache"
+
             cd "$APP_DIR"
 
             # Generate app key if missing

@@ -131,10 +131,26 @@
         .app-body { background: #f6f7fb; min-height: 100vh; }
         .app-main  { padding: 24px 28px; }
 
+        /* ── Main content wrapper ────────────── */
+        .app-wrap { padding-left: 256px; }
+
         /* ── Mobile overlay ─────────────────── */
         .sidebar-overlay {
             position: fixed; inset: 0; z-index: 20;
             background: rgba(0,0,0,.6); backdrop-filter: blur(2px);
+        }
+
+        /* ── Responsive breakpoints ──────────── */
+        @media (max-width: 1023px) {
+            .app-wrap { padding-left: 0; }
+            .app-main { padding: 14px 16px; }
+            .app-header { padding: 0 16px; gap: 10px; }
+            .header-new-btn { padding: 8px 14px; font-size: 12px; }
+            .alert { margin: 10px 16px 0; }
+        }
+        @media (max-width: 480px) {
+            .header-title { font-size: 14px; }
+            .header-new-btn span { display: none; }
         }
     </style>
 </head>
@@ -211,7 +227,7 @@
 </aside>
 
 {{-- ===== MAIN AREA ===== --}}
-<div class="flex flex-col min-h-screen" style="padding-left:256px;">
+<div class="flex flex-col min-h-screen app-wrap">
 
     {{-- Header --}}
     <header class="app-header">

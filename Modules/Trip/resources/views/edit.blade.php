@@ -15,7 +15,7 @@
                     <input type="text" name="destination" value="{{ old('destination', $trip->destination) }}"
                            class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Type</label>
                         <select name="trip_type" class="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
@@ -33,7 +33,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                         <input type="date" name="start_date" value="{{ old('start_date', $trip->start_date?->format('Y-m-d')) }}"

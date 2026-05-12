@@ -45,11 +45,19 @@
         .type-select:focus { outline: none; border-color: #6366f1; }
         .select-wrap { position: relative; display: inline-block; }
         .select-wrap::after { content: '▾'; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 10px; color: #9ca3af; pointer-events: none; }
+
+        @media (max-width: 700px) {
+            .trips-summary-row { flex-direction: column; gap: 10px !important; }
+            .trips-summary-card { flex: 1 1 auto; }
+            .trips-filter-bar { padding: 10px 14px !important; }
+            .trips-filter-btn { font-size: 11px; padding: 5px 10px; }
+            .trip-card:hover { transform: none; }
+        }
     </style>
 
     {{-- ===== SUMMARY ROW ===== --}}
-    <div style="display:grid;grid-template-columns:1fr auto;align-items:center;gap:16px;margin-bottom:24px;">
-        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+    <div style="margin-bottom:24px;">
+        <div class="trips-summary-row" style="display:flex;gap:12px;flex-wrap:wrap;align-items:stretch;">
             <div style="background:#fff;border:1px solid #e8e6ff;border-radius:14px;padding:14px 20px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(99,102,241,.06);">
                 <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;">
                     <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
@@ -85,7 +93,8 @@
     </div>
 
     {{-- ===== FILTER BAR ===== --}}
-    <form method="GET" id="filterForm"
+
+    <form method="GET" id="filterForm" class="trips-filter-bar"
           style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:24px;background:#fff;border:1px solid #e8e6ff;border-radius:16px;padding:12px 18px;box-shadow:0 2px 12px rgba(99,102,241,.05);">
 
         <div style="display:flex;align-items:center;gap:6px;margin-right:6px;">
